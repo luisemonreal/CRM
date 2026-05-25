@@ -1,0 +1,1620 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NexusCRM — Sistema de Gestión Comercial</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0f0f13;
+    --bg2: #16161d;
+    --bg3: #1e1e28;
+    --bg4: #252532;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.13);
+    --text: #f0eff8;
+    --text2: #9b99b5;
+    --text3: #5e5c78;
+    --accent: #7c6af5;
+    --accent2: #a594fc;
+    --gold: #f0c060;
+    --gold2: #fad98a;
+    --green: #3ecf8e;
+    --green2: #5ef0a8;
+    --red: #f56565;
+    --amber: #f6ad55;
+    --blue: #63b3ed;
+    --pink: #f687b3;
+    --teal: #38d9a9;
+    --close-bg: #1a2a1a;
+    --close-border: #3ecf8e;
+    --close-accent: #3ecf8e;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* TOPBAR */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    height: 60px;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    letter-spacing: -0.5px;
+    color: var(--text);
+  }
+  .logo span { color: var(--accent2); }
+
+  .nav-tabs {
+    display: flex;
+    gap: 4px;
+  }
+
+  .nav-tab {
+    padding: 7px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text2);
+    border: 1px solid transparent;
+    background: transparent;
+    transition: all 0.2s;
+  }
+  .nav-tab:hover { color: var(--text); background: var(--bg3); }
+  .nav-tab.active {
+    color: var(--text);
+    background: var(--bg4);
+    border-color: var(--border2);
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .btn-primary {
+    padding: 8px 18px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
+
+  .btn-ghost {
+    padding: 8px 14px;
+    background: transparent;
+    color: var(--text2);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-ghost:hover { color: var(--text); border-color: var(--border); background: var(--bg3); }
+
+  /* VIEWS */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* ===================== PIPELINE ===================== */
+  .pipeline-header {
+    padding: 24px 28px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .pipeline-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    color: var(--text);
+  }
+
+  .pipeline-meta {
+    font-size: 13px;
+    color: var(--text3);
+    margin-top: 2px;
+  }
+
+  /* Funnel visual */
+  .funnel-visual {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    padding: 0 28px 20px;
+    overflow-x: auto;
+  }
+
+  .funnel-stage-wrap {
+    flex: 1;
+    min-width: 220px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .funnel-bar {
+    height: 8px;
+    border-radius: 4px;
+    margin-bottom: 14px;
+    transition: width 0.4s;
+  }
+
+  .funnel-stage-header {
+    padding: 14px 16px 10px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius) var(--radius) 0 0;
+    margin: 0 4px;
+    position: relative;
+  }
+
+  .funnel-stage-header.cierre {
+    background: var(--close-bg);
+    border-color: var(--close-border);
+    border-bottom: none;
+  }
+
+  .stage-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text3);
+    margin-bottom: 4px;
+  }
+
+  .stage-label.cierre { color: var(--close-accent); }
+
+  .stage-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .stage-stats {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--text2);
+  }
+
+  .stage-stats strong { color: var(--gold); }
+
+  .funnel-arrow {
+    display: flex;
+    align-items: center;
+    padding-top: 50px;
+    color: var(--text3);
+    font-size: 18px;
+  }
+
+  /* COLUMN CARDS */
+  .pipeline-board {
+    display: flex;
+    gap: 0;
+    padding: 0 28px 40px;
+    overflow-x: auto;
+    min-height: 500px;
+  }
+
+  .pipeline-col {
+    flex: 1;
+    min-width: 220px;
+    margin: 0 4px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 var(--radius) var(--radius);
+    padding: 8px;
+    min-height: 400px;
+  }
+
+  .pipeline-col.cierre-col {
+    background: var(--close-bg);
+    border-color: var(--close-border);
+    border-top: none;
+  }
+
+  .pipeline-col.drag-over {
+    border-color: var(--accent2);
+    background: rgba(124,106,245,0.08);
+  }
+
+  .pipeline-col.cierre-col.drag-over {
+    border-color: var(--close-accent);
+    background: rgba(62,207,142,0.08);
+  }
+
+  /* LEAD CARD */
+  .lead-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    margin-bottom: 8px;
+    cursor: grab;
+    transition: all 0.2s;
+    user-select: none;
+  }
+
+  .lead-card:hover {
+    border-color: var(--border2);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+
+  .lead-card.dragging {
+    opacity: 0.4;
+    cursor: grabbing;
+  }
+
+  .cierre-col .lead-card {
+    background: #1f2e1f;
+    border-color: rgba(62,207,142,0.2);
+  }
+
+  .lead-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .lead-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text);
+  }
+
+  .lead-badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .badge-hot { background: rgba(246,87,87,0.15); color: #f56565; border: 1px solid rgba(246,87,87,0.3); }
+  .badge-warm { background: rgba(246,173,85,0.15); color: #f6ad55; border: 1px solid rgba(246,173,85,0.3); }
+  .badge-cold { background: rgba(99,179,237,0.15); color: #63b3ed; border: 1px solid rgba(99,179,237,0.3); }
+  .badge-closed { background: rgba(62,207,142,0.15); color: #3ecf8e; border: 1px solid rgba(62,207,142,0.3); }
+
+  .lead-field {
+    font-size: 12px;
+    color: var(--text2);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .lead-field span { color: var(--text3); font-size: 11px; }
+
+  .lead-revenue {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--gold);
+    margin: 8px 0 6px;
+  }
+
+  .lead-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .lead-btn {
+    flex: 1;
+    padding: 5px 8px;
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text2);
+    font-size: 11px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s;
+  }
+  .lead-btn:hover { background: var(--bg4); color: var(--text); }
+  .lead-btn.primary { border-color: var(--accent); color: var(--accent2); }
+  .lead-btn.primary:hover { background: rgba(124,106,245,0.15); }
+  .lead-btn.green { border-color: var(--close-border); color: var(--close-accent); }
+  .lead-btn.green:hover { background: rgba(62,207,142,0.1); }
+
+  .add-lead-btn {
+    width: 100%;
+    padding: 8px;
+    border: 1px dashed var(--border2);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text3);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 4px;
+  }
+  .add-lead-btn:hover { border-color: var(--accent); color: var(--accent2); background: rgba(124,106,245,0.06); }
+
+  /* ===================== MODAL ===================== */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(4px);
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 680px;
+    max-height: 92vh;
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .modal.wide { max-width: 860px; }
+
+  .modal-header {
+    padding: 24px 28px 18px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: var(--bg2);
+    z-index: 1;
+  }
+
+  .modal-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+  }
+
+  .modal-close {
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text2);
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+  .modal-close:hover { background: var(--bg4); color: var(--text); }
+
+  .modal-body { padding: 24px 28px; }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .form-row.single { grid-template-columns: 1fr; }
+  .form-row.triple { grid-template-columns: 1fr 1fr 1fr; }
+
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+
+  .form-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: var(--text3);
+  }
+
+  .form-input, .form-select, .form-textarea {
+    padding: 10px 14px;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    transition: border-color 0.2s;
+    outline: none;
+    width: 100%;
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    border-color: var(--accent);
+  }
+  .form-select { cursor: pointer; }
+  .form-textarea { resize: vertical; min-height: 80px; }
+
+  .section-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 24px 0 20px;
+  }
+
+  .section-sub {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text2);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-sub::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .modal-footer {
+    padding: 18px 28px 24px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    border-top: 1px solid var(--border);
+  }
+
+  /* Closure special */
+  .modal.closure-modal .modal-header {
+    background: var(--close-bg);
+    border-bottom-color: rgba(62,207,142,0.2);
+  }
+  .modal.closure-modal { border-color: var(--close-border); }
+  .closure-badge {
+    background: rgba(62,207,142,0.15);
+    color: var(--close-accent);
+    border: 1px solid rgba(62,207,142,0.3);
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  /* Project/Task area */
+  .task-list { margin-top: 8px; }
+
+  .task-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    margin-bottom: 6px;
+  }
+
+  .task-check {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--close-accent);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .task-text {
+    flex: 1;
+    font-size: 13px;
+    color: var(--text);
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .task-remove {
+    background: transparent;
+    border: none;
+    color: var(--text3);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 2px;
+    transition: color 0.15s;
+  }
+  .task-remove:hover { color: var(--red); }
+
+  .add-task-btn {
+    padding: 8px 14px;
+    border: 1px dashed var(--border2);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text3);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.2s;
+    margin-top: 4px;
+  }
+  .add-task-btn:hover { border-color: var(--close-accent); color: var(--close-accent); background: rgba(62,207,142,0.05); }
+
+  /* Interest tags */
+  .tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 8px;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    min-height: 44px;
+  }
+
+  .tag {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    background: rgba(124,106,245,0.15);
+    border: 1px solid rgba(124,106,245,0.3);
+    border-radius: 20px;
+    font-size: 12px;
+    color: var(--accent2);
+  }
+
+  .tag-remove {
+    background: none;
+    border: none;
+    color: var(--accent2);
+    cursor: pointer;
+    font-size: 12px;
+    padding: 0;
+    line-height: 1;
+  }
+
+  .tag-input {
+    border: none;
+    background: transparent;
+    outline: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    color: var(--text);
+    min-width: 100px;
+    flex: 1;
+  }
+
+  /* ===================== REPORTS ===================== */
+  .reports-header {
+    padding: 24px 28px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .reports-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+  }
+
+  .reports-filters {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .reports-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    padding: 0 28px 40px;
+  }
+
+  .report-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+  }
+
+  .report-card-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    margin-bottom: 4px;
+  }
+
+  .report-card-sub {
+    font-size: 12px;
+    color: var(--text3);
+    margin-bottom: 20px;
+  }
+
+  .report-full { grid-column: span 2; }
+
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    padding: 0 28px 24px;
+  }
+
+  .kpi-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+
+  .kpi-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 8px; }
+  .kpi-value { font-size: 28px; font-weight: 600; color: var(--text); font-family: 'DM Serif Display', serif; }
+  .kpi-delta { font-size: 12px; color: var(--green); margin-top: 4px; }
+
+  /* ===================== NOTIFICATION ===================== */
+  .toast {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 14px 20px;
+    font-size: 13px;
+    color: var(--text);
+    z-index: 999;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s;
+    max-width: 320px;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.green { border-left: 3px solid var(--green); }
+  .toast.purple { border-left: 3px solid var(--accent); }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .kpi-row { grid-template-columns: 1fr 1fr; }
+    .reports-grid { grid-template-columns: 1fr; }
+    .report-full { grid-column: span 1; }
+    .form-row { grid-template-columns: 1fr; }
+    .form-row.triple { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo">UT<span>CRM</span></div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showView('pipeline')">⬡ Pipeline</button>
+    <button class="nav-tab" onclick="showView('reports')">◈ Reportes</button>
+  </div>
+  <div class="topbar-right">
+    <button class="btn-ghost" onclick="openLeadModal()">+ Nuevo Lead</button>
+    <button class="btn-primary" onclick="showToast('Datos sincronizados correctamente', 'purple')">↻ Sincronizar</button>
+  </div>
+</div>
+
+<!-- PIPELINE VIEW -->
+<div class="view active" id="view-pipeline">
+
+  <div class="pipeline-header">
+    <div>
+      <div class="pipeline-title">CRM Universidad Tecnológica Santa Catarina </div>
+      <div class="pipeline-meta" id="pipeline-meta">Cargando estadísticas...</div>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <select class="form-select" style="width:auto;padding:8px 12px;" onchange="filterPipeline(this.value)">
+        <option value="all">Todos los vendedores</option>
+        <option>Carlos Mendez</option>
+        <option>Ana López</option>
+        <option>Roberto Torres</option>
+        <option>María García</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Funnel visual -->
+  <div class="funnel-visual" id="funnel-visual"></div>
+
+  <!-- Board -->
+  <div class="pipeline-board" id="pipeline-board"></div>
+
+</div>
+
+<!-- REPORTS VIEW -->
+<div class="view" id="view-reports">
+  <div class="reports-header">
+    <div class="reports-title">Reportes & Analytics</div>
+    <div class="reports-filters">
+      <select class="form-select" style="width:auto;" id="report-period" onchange="updateCharts()">
+        <option value="month">Este mes</option>
+        <option value="quarter">Este trimestre</option>
+        <option value="year">Este año</option>
+      </select>
+      <select class="form-select" style="width:auto;" id="report-vendor" onchange="updateCharts()">
+        <option value="all">Todos los vendedores</option>
+        <option>Carlos Mendez</option>
+        <option>Ana López</option>
+        <option>Roberto Torres</option>
+        <option>María García</option>
+      </select>
+      <button class="btn-primary" onclick="exportReport()">↓ Exportar CSV</button>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="kpi-label">Ingresos totales</div>
+      <div class="kpi-value" id="kpi-revenue">$0</div>
+      <div class="kpi-delta">↑ 18% vs mes anterior</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Leads activos</div>
+      <div class="kpi-value" id="kpi-leads">0</div>
+      <div class="kpi-delta" style="color:var(--amber);">↑ 5 nuevos esta semana</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Tasa de cierre</div>
+      <div class="kpi-value" id="kpi-rate">0%</div>
+      <div class="kpi-delta">↑ 3pp vs mes anterior</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Ticket promedio</div>
+      <div class="kpi-value" id="kpi-avg">$0</div>
+      <div class="kpi-delta" style="color:var(--green);">Arriba del objetivo</div>
+    </div>
+  </div>
+
+  <!-- Charts Grid -->
+  <div class="reports-grid">
+    <div class="report-card report-full">
+      <div class="report-card-title">Ingresos por mes</div>
+      <div class="report-card-sub">Proyección vs real en los últimos 12 meses</div>
+      <canvas id="chart-revenue" height="100"></canvas>
+    </div>
+    <div class="report-card">
+      <div class="report-card-title">Ingresos por vendedor</div>
+      <div class="report-card-sub">Desempeño individual del equipo</div>
+      <canvas id="chart-vendor" height="220"></canvas>
+    </div>
+    <div class="report-card">
+      <div class="report-card-title">Pipeline por fase</div>
+      <div class="report-card-sub">Valor acumulado en cada etapa</div>
+      <canvas id="chart-funnel" height="220"></canvas>
+    </div>
+    <div class="report-card">
+      <div class="report-card-title">Ingresos por producto</div>
+      <div class="report-card-sub">Top productos en el período</div>
+      <canvas id="chart-product" height="220"></canvas>
+    </div>
+    <div class="report-card">
+      <div class="report-card-title">Ingresos por cliente</div>
+      <div class="report-card-sub">Top 6 cuentas por valor</div>
+      <canvas id="chart-client" height="220"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: NUEVO LEAD / EDITAR LEAD -->
+<div class="modal-overlay" id="lead-modal" onclick="closeModalOnOverlay(event, 'lead-modal')">
+  <div class="modal" id="lead-modal-content">
+    <div class="modal-header">
+      <div class="modal-title" id="lead-modal-title">Nuevo Lead</div>
+      <button class="modal-close" onclick="closeModal('lead-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="section-sub">Información básica</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Nombre del cliente *</label>
+          <input type="text" class="form-input" id="f-name" placeholder="Ej. Empresa Acme S.A.">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Temperatura</label>
+          <select class="form-select" id="f-temp">
+            <option value="hot">🔥 Hot</option>
+            <option value="warm">🌡 Warm</option>
+            <option value="cold">🧊 Cold</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row triple">
+        <div class="form-group">
+          <label class="form-label">Vendedor asignado</label>
+          <select class="form-select" id="f-vendor">
+            <option>Carlos Mendez</option>
+            <option>Ana López</option>
+            <option>Roberto Torres</option>
+            <option>María García</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ingresos esperados ($)</label>
+          <input type="number" class="form-input" id="f-revenue" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Fecha est. de cierre</label>
+          <input type="date" class="form-input" id="f-closedate">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Forma de contacto</label>
+          <select class="form-select" id="f-contact">
+            <option>Llamada telefónica</option>
+            <option>Email</option>
+            <option>WhatsApp</option>
+            <option>LinkedIn</option>
+            <option>Referido</option>
+            <option>Evento / Feria</option>
+            <option>Redes sociales</option>
+            <option>Página web</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Producto / Servicio</label>
+          <select class="form-select" id="f-product">
+            <option>Consultoría Estratégica</option>
+            <option>Software ERP</option>
+            <option>Marketing Digital</option>
+            <option>Desarrollo Web</option>
+            <option>Auditoría Financiera</option>
+            <option>Capacitación Empresarial</option>
+            <option>Soporte TI</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" id="f-email" placeholder="contacto@empresa.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Teléfono</label>
+          <input type="tel" class="form-input" id="f-phone" placeholder="+52 81 0000 0000">
+        </div>
+      </div>
+      <div class="form-row single">
+        <div class="form-group">
+          <label class="form-label">Notas / Contexto</label>
+          <textarea class="form-textarea" id="f-notes" placeholder="Observaciones relevantes sobre este lead..."></textarea>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Etapa inicial</label>
+          <select class="form-select" id="f-stage">
+            <option value="contactado">Contactado</option>
+            <option value="cotizacion">Cotización Realizada</option>
+            <option value="propuesta">Propuesta Enviada</option>
+            <option value="negociacion">Negociación</option>
+            <option value="cierre">Cierre</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Prioridad</label>
+          <select class="form-select" id="f-priority">
+            <option>Alta</option>
+            <option>Media</option>
+            <option>Baja</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closeModal('lead-modal')">Cancelar</button>
+      <button class="btn-primary" onclick="saveLead()">Guardar Lead</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CIERRE / NUEVO CLIENTE -->
+<div class="modal-overlay" id="closure-modal" onclick="closeModalOnOverlay(event, 'closure-modal')">
+  <div class="modal wide closure-modal" id="closure-modal-content">
+    <div class="modal-header">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="modal-title" id="closure-client-name">Cliente: —</div>
+          <div class="closure-badge">✓ CIERRE</div>
+        </div>
+        <div style="font-size:12px;color:var(--close-accent);margin-top:4px;">Configuración del nuevo cliente y proyecto</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('closure-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <div class="section-sub">Perfil del cliente</div>
+      <div class="form-row triple">
+        <div class="form-group">
+          <label class="form-label">Fecha de nacimiento</label>
+          <input type="date" class="form-input" id="cl-birthdate">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Cargo / Puesto</label>
+          <input type="text" class="form-input" id="cl-position" placeholder="Director General">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Industria</label>
+          <select class="form-select" id="cl-industry">
+            <option>Tecnología</option>
+            <option>Manufactura</option>
+            <option>Retail</option>
+            <option>Salud</option>
+            <option>Educación</option>
+            <option>Finanzas</option>
+            <option>Construcción</option>
+            <option>Alimentos</option>
+            <option>Otro</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row triple">
+        <div class="form-group">
+          <label class="form-label">Tamaño de empresa</label>
+          <select class="form-select" id="cl-size">
+            <option>1–10 empleados</option>
+            <option>11–50 empleados</option>
+            <option>51–200 empleados</option>
+            <option>201–500 empleados</option>
+            <option>500+ empleados</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">País / Ciudad</label>
+          <input type="text" class="form-input" id="cl-location" placeholder="Monterrey, México">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Idioma preferido</label>
+          <select class="form-select" id="cl-lang">
+            <option>Español</option>
+            <option>Inglés</option>
+            <option>Portugués</option>
+            <option>Francés</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Gustos personales</label>
+          <input type="text" class="form-input" id="cl-hobbies" placeholder="Golf, viajes, tecnología...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Canal de comunicación preferido</label>
+          <select class="form-select" id="cl-channel">
+            <option>WhatsApp</option>
+            <option>Email</option>
+            <option>Llamada</option>
+            <option>Videollamada</option>
+            <option>Presencial</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row single">
+        <div class="form-group">
+          <label class="form-label">Intereses y temas relevantes</label>
+          <div class="tags-container" id="interests-container" onclick="document.getElementById('interests-input').focus()">
+            <input type="text" class="tag-input" id="interests-input" placeholder="Escribe y presiona Enter..." onkeydown="addInterestTag(event)">
+          </div>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+      <div class="section-sub">Proyecto vinculado</div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Nombre del proyecto</label>
+          <input type="text" class="form-input" id="proj-name" placeholder="Implementación ERP Q3 2025">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tipo de proyecto</label>
+          <select class="form-select" id="proj-type">
+            <option>Implementación</option>
+            <option>Consultoría</option>
+            <option>Desarrollo</option>
+            <option>Mantenimiento</option>
+            <option>Capacitación</option>
+            <option>Auditoría</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row triple">
+        <div class="form-group">
+          <label class="form-label">Fecha de inicio</label>
+          <input type="date" class="form-input" id="proj-start">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Fecha de entrega</label>
+          <input type="date" class="form-input" id="proj-end">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Valor del proyecto ($)</label>
+          <input type="number" class="form-input" id="proj-value" placeholder="0">
+        </div>
+      </div>
+
+      <div class="form-row single">
+        <div class="form-group">
+          <label class="form-label">Descripción del alcance</label>
+          <textarea class="form-textarea" id="proj-desc" placeholder="Describe el alcance, entregables y condiciones del proyecto..."></textarea>
+        </div>
+      </div>
+
+      <hr class="section-divider">
+      <div class="section-sub">Tareas del proyecto</div>
+
+      <div class="task-list" id="task-list">
+        <div class="task-item">
+          <input type="checkbox" class="task-check">
+          <input type="text" class="task-text" placeholder="Ej. Reunión de kick-off con el cliente">
+          <button class="task-remove" onclick="removeTask(this)">✕</button>
+        </div>
+        <div class="task-item">
+          <input type="checkbox" class="task-check">
+          <input type="text" class="task-text" placeholder="Ej. Entrega de diagnóstico inicial">
+          <button class="task-remove" onclick="removeTask(this)">✕</button>
+        </div>
+      </div>
+      <button class="add-task-btn" onclick="addTask()">+ Agregar tarea</button>
+
+      <hr class="section-divider">
+      <div class="section-sub">Detalles del trato</div>
+      <div class="form-row triple">
+        <div class="form-group">
+          <label class="form-label">Valor acordado ($)</label>
+          <input type="number" class="form-input" id="cl-value" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Forma de pago</label>
+          <select class="form-select" id="cl-payment">
+            <option>Contado</option>
+            <option>50% anticipo / 50% entrega</option>
+            <option>Mensualidades</option>
+            <option>Crédito 30 días</option>
+            <option>Crédito 60 días</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Comisión vendedor (%)</label>
+          <input type="number" class="form-input" id="cl-commission" placeholder="5" min="0" max="100">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closeModal('closure-modal')">Cancelar</button>
+      <button class="btn-primary" style="background:var(--green);color:#000;font-weight:600;" onclick="saveClosure()">✓ Confirmar Cierre</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+const STAGES = [
+  { id: 'contactado', label: 'Contactado', color: '#7c6af5', barW: '100%' },
+  { id: 'cotizacion', label: 'Cotización Realizada', color: '#63b3ed', barW: '82%' },
+  { id: 'propuesta', label: 'Propuesta Enviada', color: '#f6ad55', barW: '62%' },
+  { id: 'negociacion', label: 'Negociación', color: '#f687b3', barW: '44%' },
+  { id: 'cierre', label: 'Cierre', color: '#3ecf8e', barW: '28%' },
+];
+
+let leads = [
+  { id: 1, name: 'Grupo Industrial Noreste', temp: 'hot', vendor: 'Carlos Mendez', revenue: 185000, closedate: '2025-09-15', contact: 'Referido', product: 'Consultoría Estratégica', email: 'dir@gin.mx', phone: '+52 81 1234 5678', notes: 'Gran potencial, CEO muy interesado', stage: 'negociacion', priority: 'Alta' },
+  { id: 2, name: 'TechStart MX', temp: 'warm', vendor: 'Ana López', revenue: 62000, closedate: '2025-08-30', contact: 'LinkedIn', product: 'Software ERP', email: 'cto@techstart.mx', phone: '+52 55 9876 5432', notes: 'Startup en expansión', stage: 'propuesta', priority: 'Media' },
+  { id: 3, name: 'Distribuidora San Luis', temp: 'cold', vendor: 'Roberto Torres', revenue: 38000, closedate: '2025-10-01', contact: 'Llamada telefónica', product: 'Marketing Digital', email: 'ventas@dsl.mx', phone: '+52 44 4444 4444', notes: 'Esperando presupuesto del cliente', stage: 'contactado', priority: 'Baja' },
+  { id: 4, name: 'Constructora Vega', temp: 'hot', vendor: 'María García', revenue: 220000, closedate: '2025-07-28', contact: 'Evento / Feria', product: 'Auditoría Financiera', email: 'mg@vega.mx', phone: '+52 81 5555 5555', notes: 'Urgente, competencia activa', stage: 'negociacion', priority: 'Alta' },
+  { id: 5, name: 'Café Central Cadena', temp: 'warm', vendor: 'Carlos Mendez', revenue: 45000, closedate: '2025-09-20', contact: 'Página web', product: 'Desarrollo Web', email: 'ops@cafcentral.mx', phone: '+52 33 6666 6666', notes: 'Interesados en rediseño completo', stage: 'cotizacion', priority: 'Media' },
+  { id: 6, name: 'Logística Express', temp: 'hot', vendor: 'Ana López', revenue: 310000, closedate: '2025-07-15', contact: 'Referido', product: 'Software ERP', email: 'it@logex.mx', phone: '+52 81 7777 7777', notes: '¡Listo para firmar!', stage: 'cierre', priority: 'Alta' },
+  { id: 7, name: 'Academia Digital Pro', temp: 'warm', vendor: 'Roberto Torres', revenue: 55000, closedate: '2025-10-10', contact: 'Email', product: 'Capacitación Empresarial', email: 'dir@acadpro.mx', phone: '+52 55 8888 8888', notes: 'Necesitan propuesta formal', stage: 'propuesta', priority: 'Media' },
+  { id: 8, name: 'Salud Total Clínicas', temp: 'cold', vendor: 'María García', revenue: 92000, closedate: '2025-11-01', contact: 'WhatsApp', product: 'Soporte TI', email: 'ti@saludtotal.mx', phone: '+52 81 9999 9999', notes: 'Proceso largo de aprobación interna', stage: 'contactado', priority: 'Media' },
+];
+
+let nextId = 9;
+let editingLeadId = null;
+let closingLeadId = null;
+let chartInstances = {};
+
+// ============================================================
+// VIEW SWITCHING
+// ============================================================
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  const tabs = document.querySelectorAll('.nav-tab');
+  if (name === 'pipeline') tabs[0].classList.add('active');
+  if (name === 'reports') { tabs[1].classList.add('active'); initCharts(); }
+}
+
+// ============================================================
+// PIPELINE RENDER
+// ============================================================
+function renderPipeline(filterVendor = 'all') {
+  const filtered = filterVendor === 'all' ? leads : leads.filter(l => l.vendor === filterVendor);
+
+  // Funnel visual
+  const fv = document.getElementById('funnel-visual');
+  fv.innerHTML = '';
+  STAGES.forEach((s, i) => {
+    const stageLeads = filtered.filter(l => l.stage === s.id);
+    const total = stageLeads.reduce((a, l) => a + (l.revenue || 0), 0);
+    const wrap = document.createElement('div');
+    wrap.className = 'funnel-stage-wrap';
+    wrap.innerHTML = `
+      <div class="funnel-bar" style="background:${s.color};width:${s.barW};"></div>
+      <div class="funnel-stage-header${s.id==='cierre'?' cierre':''}">
+        <div class="stage-label${s.id==='cierre'?' cierre':''}">${String(i+1).padStart(2,'0')}</div>
+        <div class="stage-name">${s.label}</div>
+        <div class="stage-stats">
+          <span>${stageLeads.length} leads</span>
+          <span><strong>$${(total/1000).toFixed(0)}k</strong></span>
+        </div>
+      </div>`;
+    fv.appendChild(wrap);
+    if (i < STAGES.length - 1) {
+      const arrow = document.createElement('div');
+      arrow.className = 'funnel-arrow';
+      arrow.innerHTML = '›';
+      fv.appendChild(arrow);
+    }
+  });
+
+  // Board
+  const board = document.getElementById('pipeline-board');
+  board.innerHTML = '';
+  STAGES.forEach(s => {
+    const col = document.createElement('div');
+    col.className = 'pipeline-col' + (s.id==='cierre' ? ' cierre-col' : '');
+    col.dataset.stage = s.id;
+    col.innerHTML = renderStageLeads(filtered.filter(l => l.stage === s.id), s.id);
+    addDragEvents(col);
+    board.appendChild(col);
+  });
+
+  updatePipelineMeta(filtered);
+}
+
+function renderStageLeads(stageLeads, stageId) {
+  let html = stageLeads.map(l => renderLeadCard(l, stageId)).join('');
+  html += `<button class="add-lead-btn" onclick="openLeadModal('${stageId}')">+ Agregar lead</button>`;
+  return html;
+}
+
+function renderLeadCard(l, stageId) {
+  const badgeClass = { hot: 'badge-hot', warm: 'badge-warm', cold: 'badge-cold', closed: 'badge-closed' }[l.temp] || 'badge-cold';
+  const badgeLabel = { hot: '🔥 Hot', warm: '🌡 Warm', cold: '🧊 Cold' }[l.temp] || l.temp;
+  const extraBtn = stageId === 'cierre'
+    ? `<button class="lead-btn green" onclick="openClosureModal(${l.id})">⊕ Proyecto</button>`
+    : `<button class="lead-btn primary" onclick="moveLead(${l.id}, 1)">→ Avanzar</button>`;
+  return `<div class="lead-card" draggable="true" data-id="${l.id}" ondragstart="dragStart(event)">
+    <div class="lead-header">
+      <div class="lead-name">${l.name}</div>
+      <div class="lead-badge ${badgeClass}">${badgeLabel}</div>
+    </div>
+    <div class="lead-field"><span>👤</span> ${l.vendor}</div>
+    <div class="lead-field"><span>📦</span> ${l.product}</div>
+    <div class="lead-field"><span>📞</span> ${l.contact}</div>
+    <div class="lead-field"><span>📅</span> Cierre est: ${l.closedate||'—'}</div>
+    <div class="lead-revenue">$${Number(l.revenue||0).toLocaleString()}</div>
+    <div class="lead-actions">
+      <button class="lead-btn" onclick="openLeadModal(null,${l.id})">✎ Editar</button>
+      ${extraBtn}
+      <button class="lead-btn" onclick="deleteLead(${l.id})" style="color:var(--red)">✕</button>
+    </div>
+  </div>`;
+}
+
+function updatePipelineMeta(filtered) {
+  const total = filtered.reduce((a, l) => a + (l.revenue || 0), 0);
+  document.getElementById('pipeline-meta').textContent =
+    `${filtered.length} leads en pipeline · Valor total: $${total.toLocaleString()} MXN`;
+}
+
+function filterPipeline(val) { renderPipeline(val === 'Todos los vendedores' ? 'all' : val); }
+
+// ============================================================
+// DRAG & DROP
+// ============================================================
+let draggedId = null;
+
+function dragStart(e) {
+  draggedId = parseInt(e.currentTarget.dataset.id);
+  e.currentTarget.classList.add('dragging');
+  setTimeout(() => e.currentTarget.classList.add('dragging'), 0);
+}
+
+function addDragEvents(col) {
+  col.addEventListener('dragover', e => {
+    e.preventDefault();
+    col.classList.add('drag-over');
+  });
+  col.addEventListener('dragleave', () => col.classList.remove('drag-over'));
+  col.addEventListener('drop', e => {
+    e.preventDefault();
+    col.classList.remove('drag-over');
+    if (draggedId !== null) {
+      const lead = leads.find(l => l.id === draggedId);
+      if (lead) {
+        const oldStage = lead.stage;
+        lead.stage = col.dataset.stage;
+        renderPipeline();
+        showToast(`"${lead.name}" movido a ${STAGES.find(s=>s.id===lead.stage).label}`, lead.stage === 'cierre' ? 'green' : 'purple');
+        if (lead.stage === 'cierre' && oldStage !== 'cierre') {
+          setTimeout(() => openClosureModal(lead.id), 600);
+        }
+      }
+      draggedId = null;
+    }
+  });
+}
+
+// ============================================================
+// LEAD CRUD
+// ============================================================
+function openLeadModal(defaultStage, editId) {
+  editingLeadId = editId || null;
+  const modal = document.getElementById('lead-modal');
+  document.getElementById('lead-modal-title').textContent = editId ? 'Editar Lead' : 'Nuevo Lead';
+
+  if (editId) {
+    const l = leads.find(x => x.id === editId);
+    if (l) {
+      document.getElementById('f-name').value = l.name || '';
+      document.getElementById('f-temp').value = l.temp || 'warm';
+      document.getElementById('f-vendor').value = l.vendor || '';
+      document.getElementById('f-revenue').value = l.revenue || '';
+      document.getElementById('f-closedate').value = l.closedate || '';
+      document.getElementById('f-contact').value = l.contact || '';
+      document.getElementById('f-product').value = l.product || '';
+      document.getElementById('f-email').value = l.email || '';
+      document.getElementById('f-phone').value = l.phone || '';
+      document.getElementById('f-notes').value = l.notes || '';
+      document.getElementById('f-stage').value = l.stage || 'contactado';
+      document.getElementById('f-priority').value = l.priority || 'Media';
+    }
+  } else {
+    document.getElementById('f-name').value = '';
+    document.getElementById('f-temp').value = 'warm';
+    document.getElementById('f-vendor').value = 'Carlos Mendez';
+    document.getElementById('f-revenue').value = '';
+    document.getElementById('f-closedate').value = '';
+    document.getElementById('f-contact').value = 'Llamada telefónica';
+    document.getElementById('f-product').value = 'Consultoría Estratégica';
+    document.getElementById('f-email').value = '';
+    document.getElementById('f-phone').value = '';
+    document.getElementById('f-notes').value = '';
+    document.getElementById('f-stage').value = defaultStage || 'contactado';
+    document.getElementById('f-priority').value = 'Media';
+  }
+  modal.classList.add('open');
+}
+
+function saveLead() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { showToast('El nombre del cliente es requerido', 'purple'); return; }
+
+  const data = {
+    name, temp: document.getElementById('f-temp').value,
+    vendor: document.getElementById('f-vendor').value,
+    revenue: parseFloat(document.getElementById('f-revenue').value) || 0,
+    closedate: document.getElementById('f-closedate').value,
+    contact: document.getElementById('f-contact').value,
+    product: document.getElementById('f-product').value,
+    email: document.getElementById('f-email').value,
+    phone: document.getElementById('f-phone').value,
+    notes: document.getElementById('f-notes').value,
+    stage: document.getElementById('f-stage').value,
+    priority: document.getElementById('f-priority').value,
+  };
+
+  if (editingLeadId) {
+    const idx = leads.findIndex(l => l.id === editingLeadId);
+    leads[idx] = { ...leads[idx], ...data };
+    showToast(`Lead "${name}" actualizado`, 'purple');
+  } else {
+    leads.push({ id: nextId++, ...data });
+    showToast(`Lead "${name}" agregado al pipeline`, 'purple');
+  }
+
+  closeModal('lead-modal');
+  renderPipeline();
+}
+
+function moveLead(id, dir) {
+  const lead = leads.find(l => l.id === id);
+  if (!lead) return;
+  const idx = STAGES.findIndex(s => s.id === lead.stage);
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= STAGES.length) return;
+  const oldStage = lead.stage;
+  lead.stage = STAGES[newIdx].id;
+  renderPipeline();
+  showToast(`"${lead.name}" → ${STAGES[newIdx].label}`, lead.stage === 'cierre' ? 'green' : 'purple');
+  if (lead.stage === 'cierre' && oldStage !== 'cierre') {
+    setTimeout(() => openClosureModal(lead.id), 600);
+  }
+}
+
+function deleteLead(id) {
+  const lead = leads.find(l => l.id === id);
+  if (!lead) return;
+  leads = leads.filter(l => l.id !== id);
+  renderPipeline();
+  showToast(`Lead "${lead.name}" eliminado`, 'purple');
+}
+
+// ============================================================
+// CLOSURE MODAL
+// ============================================================
+function openClosureModal(id) {
+  closingLeadId = id;
+  const lead = leads.find(l => l.id === id);
+  if (!lead) return;
+  document.getElementById('closure-client-name').textContent = lead.name;
+  document.getElementById('cl-value').value = lead.revenue || '';
+  document.getElementById('proj-name').value = `Proyecto ${lead.product} – ${lead.name}`;
+  // Set today + 7 as start date
+  const today = new Date();
+  const start = new Date(today); start.setDate(today.getDate() + 7);
+  const end = new Date(today); end.setMonth(today.getMonth() + 3);
+  document.getElementById('proj-start').value = start.toISOString().split('T')[0];
+  document.getElementById('proj-end').value = end.toISOString().split('T')[0];
+  document.getElementById('proj-value').value = lead.revenue || '';
+  // Clear interests
+  const c = document.getElementById('interests-container');
+  c.querySelectorAll('.tag').forEach(t => t.remove());
+  document.getElementById('closure-modal').classList.add('open');
+}
+
+function saveClosure() {
+  const lead = leads.find(l => l.id === closingLeadId);
+  const projName = document.getElementById('proj-name').value.trim() || 'Nuevo proyecto';
+  showToast(`¡Cierre confirmado! Proyecto "${projName}" creado para ${lead ? lead.name : 'cliente'}`, 'green');
+  closeModal('closure-modal');
+  renderPipeline();
+  if (lead) { lead.temp = 'closed'; renderPipeline(); }
+}
+
+// ============================================================
+// INTEREST TAGS
+// ============================================================
+function addInterestTag(e) {
+  if (e.key === 'Enter' || e.key === ',') {
+    e.preventDefault();
+    const input = document.getElementById('interests-input');
+    const val = input.value.trim().replace(',','');
+    if (!val) return;
+    const tag = document.createElement('div');
+    tag.className = 'tag';
+    tag.innerHTML = `${val} <button class="tag-remove" onclick="this.parentElement.remove()">✕</button>`;
+    input.before(tag);
+    input.value = '';
+  }
+}
+
+// ============================================================
+// TASKS
+// ============================================================
+function addTask() {
+  const list = document.getElementById('task-list');
+  const item = document.createElement('div');
+  item.className = 'task-item';
+  item.innerHTML = `<input type="checkbox" class="task-check">
+    <input type="text" class="task-text" placeholder="Nueva tarea...">
+    <button class="task-remove" onclick="removeTask(this)">✕</button>`;
+  list.appendChild(item);
+  item.querySelector('.task-text').focus();
+}
+
+function removeTask(btn) {
+  btn.closest('.task-item').remove();
+}
+
+// ============================================================
+// MODALS
+// ============================================================
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+function closeModalOnOverlay(e, id) {
+  if (e.target === document.getElementById(id)) closeModal(id);
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+let toastTimer;
+function showToast(msg, type = 'purple') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ============================================================
+// CHARTS
+// ============================================================
+const chartColors = {
+  purple: 'rgba(124,106,245,0.85)',
+  blue:   'rgba(99,179,237,0.85)',
+  green:  'rgba(62,207,142,0.85)',
+  amber:  'rgba(240,192,96,0.85)',
+  pink:   'rgba(246,135,179,0.85)',
+  teal:   'rgba(56,217,169,0.85)',
+};
+
+const chartDefaults = {
+  color: '#9b99b5',
+  plugins: { legend: { labels: { color: '#9b99b5', font: { family: 'DM Sans', size: 12 } } } },
+  scales: {
+    x: { ticks: { color: '#9b99b5', font: { family: 'DM Sans', size: 11 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
+    y: { ticks: { color: '#9b99b5', font: { family: 'DM Sans', size: 11 } }, grid: { color: 'rgba(255,255,255,0.04)' } }
+  }
+};
+
+function destroyChart(id) {
+  if (chartInstances[id]) { chartInstances[id].destroy(); delete chartInstances[id]; }
+}
+
+function initCharts() {
+  destroyChart('revenue'); destroyChart('vendor');
+  destroyChart('funnel'); destroyChart('product'); destroyChart('client');
+
+  // KPIs
+  const totalRev = leads.reduce((a, l) => a + (l.revenue || 0), 0);
+  const closed = leads.filter(l => l.stage === 'cierre').length;
+  document.getElementById('kpi-revenue').textContent = '$' + (totalRev / 1000).toFixed(0) + 'k';
+  document.getElementById('kpi-leads').textContent = leads.length;
+  document.getElementById('kpi-rate').textContent = Math.round((closed / leads.length) * 100) + '%';
+  document.getElementById('kpi-avg').textContent = '$' + Math.round(totalRev / leads.length).toLocaleString();
+
+  // Revenue by month
+  const months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const realData = [42000,58000,71000,65000,83000,91000,88000,104000,97000,115000,121000,138000];
+  const projData = [50000,60000,70000,75000,85000,95000,95000,110000,105000,120000,130000,145000];
+
+  chartInstances.revenue = new Chart(document.getElementById('chart-revenue'), {
+    type: 'bar',
+    data: {
+      labels: months,
+      datasets: [
+        { label: 'Real', data: realData, backgroundColor: chartColors.purple, borderRadius: 4 },
+        { label: 'Proyectado', data: projData, type: 'line', borderColor: chartColors.amber, backgroundColor: 'transparent', borderWidth: 2, pointRadius: 3, tension: 0.3 }
+      ]
+    },
+    options: { ...chartDefaults, responsive: true }
+  });
+
+  // Revenue by vendor
+  const vendorMap = {};
+  leads.forEach(l => { vendorMap[l.vendor] = (vendorMap[l.vendor] || 0) + (l.revenue || 0); });
+  const vendors = Object.keys(vendorMap);
+  const vendorColors = [chartColors.purple, chartColors.blue, chartColors.green, chartColors.amber];
+
+  chartInstances.vendor = new Chart(document.getElementById('chart-vendor'), {
+    type: 'bar',
+    data: {
+      labels: vendors,
+      datasets: [{ label: 'Ingresos', data: vendors.map(v => vendorMap[v]), backgroundColor: vendorColors, borderRadius: 6 }]
+    },
+    options: { ...chartDefaults, indexAxis: 'y', responsive: true, plugins: { legend: { display: false } } }
+  });
+
+  // Pipeline funnel
+  const stageValues = STAGES.map(s => leads.filter(l => l.stage === s.id).reduce((a, l) => a + (l.revenue||0), 0));
+  chartInstances.funnel = new Chart(document.getElementById('chart-funnel'), {
+    type: 'bar',
+    data: {
+      labels: STAGES.map(s => s.label),
+      datasets: [{ label: 'Valor ($)', data: stageValues, backgroundColor: STAGES.map(s => s.color + 'CC'), borderRadius: 6 }]
+    },
+    options: { ...chartDefaults, responsive: true, plugins: { legend: { display: false } } }
+  });
+
+  // By product
+  const prodMap = {};
+  leads.forEach(l => { prodMap[l.product] = (prodMap[l.product] || 0) + (l.revenue || 0); });
+  const prods = Object.keys(prodMap);
+  chartInstances.product = new Chart(document.getElementById('chart-product'), {
+    type: 'doughnut',
+    data: {
+      labels: prods,
+      datasets: [{ data: prods.map(p => prodMap[p]), backgroundColor: Object.values(chartColors), borderWidth: 0, hoverOffset: 8 }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { position: 'bottom', labels: { color: '#9b99b5', font: { family: 'DM Sans', size: 11 }, padding: 12 } } }
+    }
+  });
+
+  // By client (top 6)
+  const sorted = [...leads].sort((a, b) => (b.revenue||0) - (a.revenue||0)).slice(0, 6);
+  chartInstances.client = new Chart(document.getElementById('chart-client'), {
+    type: 'bar',
+    data: {
+      labels: sorted.map(l => l.name.length > 18 ? l.name.slice(0,18)+'...' : l.name),
+      datasets: [{ label: 'Valor', data: sorted.map(l => l.revenue || 0), backgroundColor: chartColors.teal, borderRadius: 6 }]
+    },
+    options: { ...chartDefaults, responsive: true, plugins: { legend: { display: false } } }
+  });
+}
+
+function updateCharts() { initCharts(); }
+
+function exportReport() {
+  const headers = ['Nombre','Vendedor','Producto','Etapa','Temperatura','Ingresos','Fecha Cierre'];
+  const rows = leads.map(l => [l.name, l.vendor, l.product, l.stage, l.temp, l.revenue, l.closedate]);
+  const csv = [headers, ...rows].map(r => r.join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'reporte-crm.csv'; a.click();
+  URL.revokeObjectURL(url);
+  showToast('Reporte CSV exportado correctamente', 'green');
+}
+
+// ============================================================
+// INIT
+// ============================================================
+renderPipeline();
+</script>
+</body>
+</html>
