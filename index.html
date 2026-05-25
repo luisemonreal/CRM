@@ -115,6 +115,19 @@
     transition: all 0.2s;
   }
   .btn-ghost:hover { color: var(--text); border-color: var(--border); background: var(--bg3); }
+  
+  .btn-danger-ghost {
+    padding: 8px 14px;
+    background: transparent;
+    color: var(--red);
+    border: 1px solid var(--red);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-danger-ghost:hover { background: rgba(239, 68, 68, 0.05); }
 
   .view { display: none; }
   .view.active { display: block; }
@@ -153,15 +166,7 @@
     margin: 0 4px;
   }
 
-  .funnel-stage-header.cierre { background: var(--close-bg); border-color: var(--close-border); }
-  .funnel-stage-header.cancelada { background: var(--cancel-bg); border-color: var(--cancel-border); }
-  .funnel-stage-header.perdida { background: var(--lost-bg); border-color: var(--lost-border); }
-
   .stage-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text3); margin-bottom: 4px; }
-  .stage-label.cierre { color: var(--close-accent); }
-  .stage-label.cancelada { color: var(--cancel-accent); }
-  .stage-label.perdida { color: var(--lost-accent); }
-
   .stage-stats { display: flex; flex-direction: column; gap: 2px; margin-top: 8px; font-size: 12px; color: var(--text2); }
 
   .pipeline-board { display: flex; gap: 0; padding: 0 28px 40px; overflow-x: auto; min-height: 500px; }
@@ -177,11 +182,6 @@
     padding: 8px;
     min-height: 400px;
   }
-
-  .pipeline-col.cierre-col { background: var(--close-bg); border-color: var(--close-border); }
-  .pipeline-col.cancelada-col { background: var(--cancel-bg); border-color: var(--cancel-border); }
-  .pipeline-col.perdida-col { background: var(--lost-bg); border-color: var(--lost-border); }
-
   .pipeline-col.drag-over { border-color: var(--accent); background: rgba(14, 165, 233, 0.04); }
 
   .lead-card {
@@ -195,7 +195,6 @@
     user-select: none;
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   }
-
   .lead-card:hover { border-color: var(--border2); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
   .lead-card.dragging { opacity: 0.4; cursor: grabbing; }
 
@@ -206,14 +205,10 @@
   .badge-hot { background: rgba(239,68,68,0.1); color: var(--red); }
   .badge-warm { background: rgba(245,158,11,0.1); color: var(--amber); }
   .badge-cold { background: rgba(59,130,246,0.1); color: var(--blue); }
-  .badge-closed { background: rgba(16,185,129,0.1); color: var(--green); }
-  .badge-cancel { background: rgba(153,27,27,0.1); color: var(--cancel-accent); }
-  .badge-lost { background: rgba(194,65,12,0.1); color: var(--lost-accent); }
 
   .lead-field { font-size: 12px; color: var(--text2); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
   .lead-field span { color: var(--text3); font-size: 11px; }
   .lead-revenue { font-size: 14px; font-weight: 600; color: var(--blue); margin: 6px 0; }
-  .lead-reason { font-size: 11px; color: var(--text2); background: rgba(0,0,0,0.04); padding: 4px; border-radius: 4px; margin-top: 4px; font-style: italic; }
 
   .lead-stars { color: var(--amber); font-size: 12px; margin-bottom: 6px; }
 
@@ -237,6 +232,19 @@
   .lead-btn.red:hover { background: rgba(239,68,68,0.05); }
   .lead-btn.amber { border-color: var(--amber); color: var(--amber); }
   .lead-btn.amber:hover { background: rgba(245,158,11,0.05); }
+
+  /* CLOSURES TAB RESTRUCTURE */
+  .closures-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; padding: 0 28px 40px; }
+  .closures-col { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; min-height: 450px; }
+  .closures-col.won-box { border-top: 4px solid var(--green); }
+  .closures-col.cancel-box { border-top: 4px solid var(--red); }
+  .closures-col.lost-box { border-top: 4px solid var(--amber); }
+  .closures-box-title { font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px; display: flex; justify-content: space-between; }
+  
+  .history-card { background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 10px; }
+  .history-title { font-weight: 600; font-size: 13px; color: var(--text); margin-bottom: 4px; }
+  .history-desc { font-size: 12px; color: var(--text2); margin-bottom: 4px; }
+  .history-reason { font-size: 11px; font-style: italic; color: var(--text2); background: rgba(0,0,0,0.04); padding: 6px; border-radius: 4px; margin-top: 6px; border-left: 2px solid var(--text3); }
 
   .customers-container { padding: 24px 28px; }
   .customers-table-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; overflow-x: auto; }
@@ -327,7 +335,7 @@
   .toast { position: fixed; bottom: 28px; right: 28px; background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--radius); padding: 12px 20px; font-size: 13px; color: var(--text); z-index: 999; transform: translateY(100px); opacity: 0; transition: all 0.3s; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); }
   .toast.show { transform: translateY(0); opacity: 1; }
   .toast.green { border-left: 4px solid var(--green); }
-  .toast.purple { border-left: 4px solid var(--accent); }
+  .toast.red { border-left: 4px solid var(--red); }
 
   .confetti { position: fixed; width: 8px; height: 8px; z-index: 300; opacity: 0.8; pointer-events: none; animation: fall 2.5s ease-out forwards; }
   @keyframes fall { 0% { transform: translateY(-20px) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(360deg); opacity: 0; } }
@@ -337,12 +345,12 @@
 </head>
 <body>
 
-<!-- TOPBAR -->
 <div class="topbar">
   <div class="logo">UT<span>CRM</span></div>
   <div class="nav-tabs">
-    <button class="nav-tab active" id="tab-pipeline" onclick="showView('pipeline')">⬡ Pipeline</button>
-    <button class="nav-tab" id="tab-customers" onclick="showView('customers')">👥 Clientes</button>
+    <button class="nav-tab active" id="tab-pipeline" onclick="showView('pipeline')">⬡ Pipeline Activo</button>
+    <button class="nav-tab" id="tab-closures" onclick="showView('closures')">📋 Historial de Cierres</button>
+    <button class="nav-tab" id="tab-customers" onclick="showView('customers')">👥 Clientes Activos</button>
     <button class="nav-tab" id="tab-reports" onclick="showView('reports')">◈ Reportes</button>
   </div>
   <div class="topbar-right">
@@ -350,14 +358,15 @@
   </div>
 </div>
 
-<!-- PIPELINE VIEW -->
 <div class="view active" id="view-pipeline">
   <div class="pipeline-header">
     <div>
-      <div class="pipeline-title">CRM Universidad Tecnológica Santa Catarina</div>
+      <div class="pipeline-title">UNIVERSIDAD TECNOLÓGICA SANTA CATARINA</div>
+      <div class="pipeline-title">Desarrollado por: Luis Monreal </div>
       <div class="pipeline-meta" id="pipeline-meta">Cargando métricas dinámicas...</div>
     </div>
-    <div>
+    <div style="display:flex; gap:10px;">
+      <button class="btn-danger-ghost" onclick="clearAllRecords()">🧹 Limpiar Registros</button>
       <select class="form-select" style="width:auto;padding:8px 12px;" id="pipeline-vendor-filter" onchange="filterPipeline(this.value)">
         <option value="all">Todos los vendedores</option>
         <option value="Carlos Mendez">Carlos Mendez</option>
@@ -371,7 +380,27 @@
   <div class="pipeline-board" id="pipeline-board"></div>
 </div>
 
-<!-- CUSTOMERS TAB -->
+<div class="view" id="view-closures">
+  <div class="customers-container" style="padding-bottom: 10px;">
+    <div class="pipeline-title">Estatus Finales de Venta</div>
+    <div class="pipeline-meta">Bitácora completa y auditoría de negociaciones concluidas en el período.</div>
+  </div>
+  <div class="closures-grid">
+    <div class="closures-col won-box">
+      <div class="closures-box-title" style="color:var(--close-accent);">Ganadas ✓ <span id="count-won">0</span></div>
+      <div id="box-content-won"></div>
+    </div>
+    <div class="closures-col cancel-box">
+      <div class="closures-box-title" style="color:var(--cancel-accent);">Canceladas ✕ <span id="count-cancel">0</span></div>
+      <div id="box-content-cancel"></div>
+    </div>
+    <div class="closures-col lost-box">
+      <div class="closures-box-title" style="color:var(--lost-accent);">Perdidas ⚠ <span id="count-lost">0</span></div>
+      <div id="box-content-lost"></div>
+    </div>
+  </div>
+</div>
+
 <div class="view" id="view-customers">
   <div class="customers-container">
     <div class="pipeline-header" style="padding: 0 0 20px 0;">
@@ -399,7 +428,6 @@
   </div>
 </div>
 
-<!-- REPORTS VIEW -->
 <div class="view" id="view-reports">
   <div class="reports-header">
     <div class="reports-title">Métricas Operativas & Analytics Real-Time</div>
@@ -449,7 +477,6 @@
   </div>
 </div>
 
-<!-- MODAL: NUEVO LEAD -->
 <div class="modal-overlay" id="lead-modal" onclick="closeModalOnOverlay(event, 'lead-modal')">
   <div class="modal" id="lead-modal-content">
     <div class="modal-header">
@@ -546,7 +573,6 @@
   </div>
 </div>
 
-<!-- MODAL: CIERRE GANADO -->
 <div class="modal-overlay" id="closure-modal" onclick="closeModalOnOverlay(event, 'closure-modal')">
   <div class="modal wide closure-modal" id="closure-modal-content">
     <div class="modal-header">
@@ -600,7 +626,6 @@
   </div>
 </div>
 
-<!-- MODAL: VENTAS NO REALIZADAS (PERDIDAS / CANCELADAS) -->
 <div class="modal-overlay" id="discard-modal" onclick="closeModalOnOverlay(event, 'discard-modal')">
   <div class="modal" id="discard-modal-container">
     <div class="modal-header">
@@ -623,7 +648,6 @@
   </div>
 </div>
 
-<!-- MODAL: EXPEDIENTE CLIENTE & PROGRAMADOR DE TAREAS -->
 <div class="modal-overlay" id="file-modal" onclick="closeModalOnOverlay(event, 'file-modal')">
   <div class="modal wide" style="border-top: 4px solid var(--accent);">
     <div class="modal-header">
@@ -664,13 +688,12 @@
   </div>
 </div>
 
-<!-- MODAL: CELEBRACIÓN -->
 <div class="modal-overlay" id="achievement-modal" onclick="closeModal('achievement-modal')">
   <div class="modal" style="max-width:400px;">
     <div class="modal-body achievement-body">
       <div class="achievement-icon">🎉</div>
       <h2 style="font-family:'DM Serif Display', serif; font-size:24px; margin-bottom:10px;">¡Cierre Consolidado!</h2>
-      <p style="color:var(--text2); font-size:13px;">El trato comercial se ha validado y transformado de manera óptima en un cliente activo dentro de los expedientes post-venta.</p>
+      <p style="color:var(--text2); font-size:13px;">El trato comercial se ha archivado de manera óptima en los registros históricos de cierres ganados.</p>
       <button class="btn-primary" style="margin-top:16px;" onclick="closeModal('achievement-modal')">Aceptar</button>
     </div>
   </div>
@@ -695,23 +718,21 @@
   let activeClosureLeadId = null;
   let selectedCustomerIndex = null;
 
-  // CHART POINTERS
   let chartInstRevenue = null;
   let chartInstFunnel = null;
   let chartInstVendor = null;
 
-  const stagesDef = [
+  // Active view stages for primary pipeline
+  const activeStages = [
     { key: "contactado", name: "Contactado" },
     { key: "cotizacion", name: "Cotización Realizada" },
     { key: "propuesta", name: "Propuesta Enviada" },
-    { key: "negociacion", name: "Negociación" },
-    { key: "cierre", name: "Cierre Ganado" },
-    { key: "cancelada", name: "Venta Cancelada" },
-    { key: "perdida", name: "Venta Perdida" }
+    { key: "negociacion", name: "Negociación" }
   ];
 
   window.addEventListener('DOMContentLoaded', () => {
     renderPipeline();
+    renderClosuresTab();
     initCharts();
   });
 
@@ -722,12 +743,11 @@
     document.getElementById(`view-${viewId}`).classList.add('active');
     document.getElementById(`tab-${viewId}`).classList.add('active');
 
-    if (viewId === 'reports') {
-      updateCharts();
-    }
+    if (viewId === 'reports') updateCharts();
+    if (viewId === 'closures') renderClosuresTab();
   }
 
-  // PIPELINE RENDERING
+  // REFRESH PIPELINE (ACTIVE ONLY)
   function renderPipeline() {
     const board = document.getElementById('pipeline-board');
     const visual = document.getElementById('funnel-visual');
@@ -735,16 +755,17 @@
     visual.innerHTML = '';
 
     let filtered = leads.filter(l => currentFilteringVendor === "all" || l.vendor === currentFilteringVendor);
+    let activeLeads = filtered.filter(l => l.stage !== 'cierre' && l.stage !== 'cancelada' && l.stage !== 'perdida');
 
-    stagesDef.forEach(st => {
-      const stageLeads = filtered.filter(l => l.stage === st.key);
+    activeStages.forEach(st => {
+      const stageLeads = activeLeads.filter(l => l.stage === st.key);
       const totalValue = stageLeads.reduce((acc, curr) => acc + curr.revenue, 0);
 
       const wrap = document.createElement('div');
       wrap.className = "funnel-stage-wrap";
       wrap.innerHTML = `
-        <div class="funnel-stage-header ${st.key}">
-          <div class="stage-label ${st.key}">${st.name}</div>
+        <div class="funnel-stage-header">
+          <div class="stage-label">${st.name}</div>
           <div class="stage-stats">
             <span>Leads: <strong>${stageLeads.length}</strong></span>
             <span>Vol: <strong>$${totalValue.toLocaleString()}</strong></span>
@@ -754,7 +775,7 @@
       visual.appendChild(wrap);
 
       const col = document.createElement('div');
-      col.className = `pipeline-col ${st.key}-col`;
+      col.className = `pipeline-col`;
       col.dataset.stage = st.key;
       col.ondragover = (e) => { e.preventDefault(); col.classList.add('drag-over'); };
       col.ondragleave = () => col.classList.remove('drag-over');
@@ -763,39 +784,28 @@
       stageLeads.forEach(lead => {
         const card = document.createElement('div');
         card.className = "lead-card";
-        card.draggable = (lead.stage !== 'cierre' && lead.stage !== 'cancelada' && lead.stage !== 'perdida');
+        card.draggable = true;
         card.dataset.id = lead.id;
         
-        if(card.draggable) {
-          card.ondragstart = (e) => { card.classList.add('dragging'); e.dataTransfer.setData('text/plain', lead.id); };
-          card.ondragend = () => card.classList.remove('dragging');
-        }
-
-        let currentBadge = "cold";
-        if(lead.stage === 'cierre') currentBadge = "closed";
-        else if(lead.stage === 'cancelada') currentBadge = "cancel";
-        else if(lead.stage === 'perdida') currentBadge = "lost";
-        else currentBadge = lead.temp;
+        card.ondragstart = (e) => { card.classList.add('dragging'); e.dataTransfer.setData('text/plain', lead.id); };
+        card.ondragend = () => card.classList.remove('dragging');
 
         let starString = "⭐".repeat(lead.rating || 3);
 
         card.innerHTML = `
           <div class="lead-header">
             <span class="lead-name" title="${lead.name}">${lead.name}</span>
-            <span class="lead-badge badge-${currentBadge}">${lead.stage === 'cierre' ? 'Ganado' : lead.stage === 'cancelada' ? 'Cancelada' : lead.stage === 'perdida' ? 'Perdida' : lead.temp}</span>
+            <span class="lead-badge badge-${lead.temp}">${lead.temp}</span>
           </div>
           <div class="lead-stars">${starString}</div>
           <div class="lead-field"><span>Prod:</span> ${lead.product}</div>
           <div class="lead-field"><span>Rep:</span> ${lead.vendor}</div>
           <div class="lead-revenue">$${lead.revenue.toLocaleString()}</div>
-          ${lead.reason ? `<div class="lead-reason" title="${lead.reason}">Motivo: ${lead.reason}</div>` : ''}
-          ${(lead.stage !== 'cierre' && lead.stage !== 'cancelada' && lead.stage !== 'perdida') ? `
-            <div class="lead-actions">
-              <button class="lead-btn green" onclick="triggerClosureFlow(${lead.id})">✓ Ganada</button>
-              <button class="lead-btn red" onclick="triggerDiscardFlow(${lead.id}, 'cancelada')">✕ Cancelar</button>
-              <button class="lead-btn amber" onclick="triggerDiscardFlow(${lead.id}, 'perdida')">⚠ Perder</button>
-            </div>
-          ` : ''}
+          <div class="lead-actions">
+            <button class="lead-btn green" onclick="triggerClosureFlow(${lead.id})">✓ Ganada</button>
+            <button class="lead-btn red" onclick="triggerDiscardFlow(${lead.id}, 'cancelada')">✕ Cancelar</button>
+            <button class="lead-btn amber" onclick="triggerDiscardFlow(${lead.id}, 'perdida')">⚠ Perder</button>
+          </div>
         `;
         col.appendChild(card);
       });
@@ -803,9 +813,8 @@
       board.appendChild(col);
     });
 
-    const activeLeadsCount = filtered.filter(l => l.stage !== 'cierre' && l.stage !== 'cancelada' && l.stage !== 'perdida').length;
-    const activeVol = filtered.filter(l => l.stage !== 'cierre' && l.stage !== 'cancelada' && l.stage !== 'perdida').reduce((s,l)=>s+l.revenue, 0);
-    document.getElementById('pipeline-meta').innerText = `${activeLeadsCount} prospectos activos en negociación de manera directa · Valor actual de cartera activa: $${activeVol.toLocaleString()}`;
+    const activeVol = activeLeads.reduce((s,l)=>s+l.revenue, 0);
+    document.getElementById('pipeline-meta').innerText = `${activeLeads.length} prospectos activos en negociación de manera directa · Valor de cartera activa: $${activeVol.toLocaleString()}`;
   }
 
   function filterPipeline(vendor) {
@@ -819,20 +828,74 @@
     if(!id) return;
     const targetStage = col.dataset.stage;
     
-    if (targetStage === 'cierre') {
-      triggerClosureFlow(id);
-    } else if (targetStage === 'cancelada' || targetStage === 'perdida') {
-      triggerDiscardFlow(id, targetStage);
-    } else {
-      const lead = leads.find(l => l.id === id);
-      if (lead) {
-        lead.stage = targetStage;
-        renderPipeline();
-      }
+    const lead = leads.find(l => l.id === id);
+    if (lead) {
+      lead.stage = targetStage;
+      renderPipeline();
     }
   }
 
-  // FLOW CLOSURE & DISCARD ACTIONERS
+  // WIPE OUT UTILITY METHOD
+  function clearAllRecords() {
+    if(confirm("¿Está seguro de querer limpiar todos los registros actuales del sistema comercial?")) {
+      leads = [];
+      closedCustomers = [];
+      renderPipeline();
+      renderClosuresTab();
+      updateCustomersTable();
+      showToast("Registros del sistema purgados", "red");
+    }
+  }
+
+  // RENDER SEPARATED CLOSURES TAB CONTEXTS
+  function renderClosuresTab() {
+    const boxWon = document.getElementById('box-content-won');
+    const boxCancel = document.getElementById('box-content-cancel');
+    const boxLost = document.getElementById('box-content-lost');
+
+    boxWon.innerHTML = '';
+    boxCancel.innerHTML = '';
+    boxLost.innerHTML = '';
+
+    let wonLeads = leads.filter(l => l.stage === 'cierre');
+    let cancelLeads = leads.filter(l => l.stage === 'cancelada');
+    let lostLeads = leads.filter(l => l.stage === 'perdida');
+
+    document.getElementById('count-won').innerText = wonLeads.length;
+    document.getElementById('count-cancel').innerText = cancelLeads.length;
+    document.getElementById('count-lost').innerText = lostLeads.length;
+
+    wonLeads.forEach(l => {
+      boxWon.innerHTML += `
+        <div class="history-card">
+          <div class="history-title">${l.name}</div>
+          <div class="history-desc">Asesor: ${l.vendor} | Prod: ${l.product}</div>
+          <div style="font-weight:600; color:var(--green);">Monto: $${l.revenue.toLocaleString()}</div>
+        </div>`;
+    });
+
+    cancelLeads.forEach(l => {
+      boxCancel.innerHTML += `
+        <div class="history-card">
+          <div class="history-title">${l.name}</div>
+          <div class="history-desc">Asesor: ${l.vendor} | Prod: ${l.product}</div>
+          <div style="font-weight:600; color:var(--red); margin-bottom:4px;">Monto: $${l.revenue.toLocaleString()}</div>
+          <div class="history-reason">Motivo: ${l.reason || 'No especificado'}</div>
+        </div>`;
+    });
+
+    lostLeads.forEach(l => {
+      boxLost.innerHTML += `
+        <div class="history-card">
+          <div class="history-title">${l.name}</div>
+          <div class="history-desc">Asesor: ${l.vendor} | Prod: ${l.product}</div>
+          <div style="font-weight:600; color:var(--amber); margin-bottom:4px;">Monto: $${l.revenue.toLocaleString()}</div>
+          <div class="history-reason">Motivo: ${l.reason || 'No especificado'}</div>
+        </div>`;
+    });
+  }
+
+  // ACTION FLOWERS
   function triggerClosureFlow(id) {
     activeClosureLeadId = id;
     const lead = leads.find(l => l.id === id);
@@ -906,7 +969,7 @@
     renderPipeline();
   }
 
-  // CUSTOMER FILE MANAGEMENT (POST-VENTA)
+  // CUSTOMER CHANNELS
   function updateCustomersTable() {
     const tbody = document.getElementById('customers-table-body');
     tbody.innerHTML = '';
@@ -1001,7 +1064,6 @@
     renderFileTasks();
   }
 
-  // LEAD CAPTURE POPUPS
   function openLeadModal() {
     document.getElementById('f-name').value = "";
     document.getElementById('f-revenue').value = "";
@@ -1053,12 +1115,12 @@
     document.getElementById('achievement-modal').classList.add('open');
   }
 
-  // ANALYTICS REAL TIME (DYNAMIC BASED ON STATE)
+  // ANALYTICS INTERFACES
   function initCharts() {
     const ctxRev = document.getElementById('chart-revenue').getContext('2d');
     chartInstRevenue = new Chart(ctxRev, {
       type: 'bar',
-      data: { labels: ['Pipeline Activo', 'Ganado (Post-Venta)', 'Cancelado / Perdido'], datasets: [{ label: 'Volumen Financiero ($)', data: [0, 0, 0], backgroundColor: ['#3b82f6', '#10b981', '#ef4444'] }] },
+      data: { labels: ['Pipeline Activo', 'Ganado', 'Cancelado / Perdido'], datasets: [{ label: 'Volumen Financiero ($)', data: [0, 0, 0], backgroundColor: ['#3b82f6', '#10b981', '#ef4444'] }] },
       options: { responsive: true, plugins: { legend: { display: false } } }
     });
 
@@ -1079,8 +1141,6 @@
 
   function updateCharts() {
     const selectedVendor = document.getElementById('report-vendor').value;
-    
-    // Process live business datasets filtered strictly
     let dataset = leads.filter(l => selectedVendor === "all" || l.vendor === selectedVendor);
 
     let activeVol = dataset.filter(l => l.stage !== 'cierre' && l.stage !== 'cancelada' && l.stage !== 'perdida').reduce((s,l)=>s+l.revenue, 0);
@@ -1092,32 +1152,25 @@
     let totalClosedAttempts = dataset.filter(l => l.stage === 'cierre' || l.stage === 'cancelada' || l.stage === 'perdida').length;
 
     let rate = totalClosedAttempts > 0 ? Math.round((wonCount / totalClosedAttempts) * 100) : 0;
-    let averageTicket = wonCount > 0 ? Math.round(wonVol / wonCount) : 0;
 
-    // Refresh KPI DOM Elements
     document.getElementById('kpi-revenue').innerText = `$${wonVol.toLocaleString()}`;
     document.getElementById('kpi-leads').innerText = activeCount;
     document.getElementById('kpi-rate').innerText = `${rate}%`;
     document.getElementById('kpi-lost-vol').innerText = `$${lostVol.toLocaleString()}`;
 
-    // Update Line/Bar Summary Chart
     chartInstRevenue.data.datasets[0].data = [activeVol, wonVol, lostVol];
     chartInstRevenue.update();
 
-    // Update Stage Conversion Funnel Chart
-    let countsByStage = stagesDef.map(st => dataset.filter(l => l.stage === st.key).length);
-    chartInstFunnel.data.datasets[0].data = countsByStage;
+    const allStagesList = ['contactado', 'cotizacion', 'propuesta', 'negociacion', 'cierre', 'cancelada', 'perdida'];
+    chartInstFunnel.data.datasets[0].data = allStagesList.map(st => dataset.filter(l => l.stage === st).length);
     chartInstFunnel.data.datasets[0].backgroundColor = ['#0ea5e9', '#3b82f6', '#8b5cf6', '#f59e0b', '#10b981', '#ef4444', '#b45309'];
     chartInstFunnel.update();
 
-    // Update Vendor Share Segment Chart dynamically
     let uniqueVendors = ['Carlos Mendez', 'Ana López', 'Roberto Torres', 'María García'];
     if (selectedVendor !== "all") uniqueVendors = [selectedVendor];
     
-    let shares = uniqueVendors.map(v => leads.filter(l => l.vendor === v && l.stage === 'cierre').reduce((s,l)=>s+l.revenue,0));
-    
     chartInstVendor.data.labels = uniqueVendors;
-    chartInstVendor.data.datasets[0].data = shares;
+    chartInstVendor.data.datasets[0].data = uniqueVendors.map(v => leads.filter(l => l.vendor === v && l.stage === 'cierre').reduce((s,l)=>s+l.revenue,0));
     chartInstVendor.update();
   }
 </script>
