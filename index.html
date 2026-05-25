@@ -233,7 +233,6 @@
   .lead-btn.amber { border-color: var(--amber); color: var(--amber); }
   .lead-btn.amber:hover { background: rgba(245,158,11,0.05); }
 
-  /* CLOSURES TAB RESTRUCTURE */
   .closures-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; padding: 0 28px 40px; }
   .closures-col { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; min-height: 450px; }
   .closures-col.won-box { border-top: 4px solid var(--green); }
@@ -307,7 +306,6 @@
   .closure-badge.red { background: rgba(239,68,68,0.1); color: var(--cancel-accent); }
   .closure-badge.amber { background: rgba(245,158,11,0.1); color: var(--lost-accent); }
 
-  /* TASKS STYLE */
   .task-box { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px; background: var(--bg3); margin-top: 10px; }
   .task-creator { display: flex; gap: 8px; margin-bottom: 12px; }
   .task-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 6px; }
@@ -318,7 +316,6 @@
   .status-progress { background: #dbeafe; color: #1e40af; }
   .status-done { background: #d1fae5; color: #065f46; }
 
-  /* REPORTS */
   .reports-header { padding: 24px 28px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
   .reports-title { font-family: 'DM Serif Display', serif; font-size: 28px; }
   .reports-filters { display: flex; gap: 10px; }
@@ -361,8 +358,7 @@
 <div class="view active" id="view-pipeline">
   <div class="pipeline-header">
     <div>
-      <div class="pipeline-title">UNIVERSIDAD TECNOLÓGICA SANTA CATARINA</div>
-      <div class="pipeline-title">Desarrollado por: Luis Monreal </div>
+      <div class="pipeline-title">Embudo de Ventas Operativo</div>
       <div class="pipeline-meta" id="pipeline-meta">Cargando métricas dinámicas...</div>
     </div>
     <div style="display:flex; gap:10px;">
@@ -702,7 +698,6 @@
 <div class="toast" id="toast-notif"></div>
 
 <script>
-  // CENTRALIZED STATE
   let leads = [
     { id: 1, name: "Distribuidora del Norte", temp: "hot", vendor: "Carlos Mendez", revenue: 45000, product: "Software ERP", rating: 5, stage: "contactado", email: "norte@dist.mx", phone: "811", reason: "" },
     { id: 2, name: "Consultores Asociados", temp: "warm", vendor: "Ana López", revenue: 15000, product: "Marketing Digital", rating: 4, stage: "cotizacion", email: "ca@consultores.com", phone: "812", reason: "" },
@@ -722,7 +717,6 @@
   let chartInstFunnel = null;
   let chartInstVendor = null;
 
-  // Active view stages for primary pipeline
   const activeStages = [
     { key: "contactado", name: "Contactado" },
     { key: "cotizacion", name: "Cotización Realizada" },
@@ -747,7 +741,6 @@
     if (viewId === 'closures') renderClosuresTab();
   }
 
-  // REFRESH PIPELINE (ACTIVE ONLY)
   function renderPipeline() {
     const board = document.getElementById('pipeline-board');
     const visual = document.getElementById('funnel-visual');
@@ -787,7 +780,10 @@
         card.draggable = true;
         card.dataset.id = lead.id;
         
-        card.ondragstart = (e) => { card.classList.add('dragging'); e.dataTransfer.setData('text/plain', lead.id); };
+        card.ondragstart = (e) => { 
+          card.classList.add('dragging'); 
+          e.dataTransfer.setData('text/plain', lead.id); 
+        };
         card.ondragend = () => card.classList.remove('dragging');
 
         let starString = "⭐".repeat(lead.rating || 3);
@@ -823,19 +819,21 @@
   }
 
   function handleDropCard(e, col) {
+    e.preventDefault();
     col.classList.remove('drag-over');
-    const id = parseInt(e.dataTransfer.setData('text/plain') || e.dataTransfer.getData('text'));
-    if(!id) return;
-    const targetStage = col.dataset.stage;
     
+    const id = parseInt(e.dataTransfer.getData('text/plain'));
+    if(!id) return;
+    
+    const targetStage = col.dataset.stage;
     const lead = leads.find(l => l.id === id);
+    
     if (lead) {
       lead.stage = targetStage;
       renderPipeline();
     }
   }
 
-  // WIPE OUT UTILITY METHOD
   function clearAllRecords() {
     if(confirm("¿Está seguro de querer limpiar todos los registros actuales del sistema comercial?")) {
       leads = [];
@@ -847,7 +845,6 @@
     }
   }
 
-  // RENDER SEPARATED CLOSURES TAB CONTEXTS
   function renderClosuresTab() {
     const boxWon = document.getElementById('box-content-won');
     const boxCancel = document.getElementById('box-content-cancel');
@@ -895,7 +892,6 @@
     });
   }
 
-  // ACTION FLOWERS
   function triggerClosureFlow(id) {
     activeClosureLeadId = id;
     const lead = leads.find(l => l.id === id);
@@ -969,7 +965,6 @@
     renderPipeline();
   }
 
-  // CUSTOMER CHANNELS
   function updateCustomersTable() {
     const tbody = document.getElementById('customers-table-body');
     tbody.innerHTML = '';
@@ -1115,7 +1110,6 @@
     document.getElementById('achievement-modal').classList.add('open');
   }
 
-  // ANALYTICS INTERFACES
   function initCharts() {
     const ctxRev = document.getElementById('chart-revenue').getContext('2d');
     chartInstRevenue = new Chart(ctxRev, {
